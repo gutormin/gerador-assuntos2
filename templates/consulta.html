@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block titulo %}Consultar Assuntos{% endblock %}
+{% block conteudo %}
+<h1 class="pagina-titulo">Consultar Assuntos</h1>
+
+<form method="get" action="{{ url_for('consulta') }}" class="filtros">
+  <input type="text" name="q" placeholder="Buscar por palavra-chave, título ou tag..."
+         value="{{ termo }}" class="filtro-busca">
+
+  <select name="tipo">
+    <option value="">Todos os tipos</option>
+    {% for t in tipos %}
+      <option value="{{ t.id }}" {% if tipo_sel|string == t.id|string %}selected{% endif %}>
+        {{ t.nome }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <select name="subtitulo">
+    <option value="">Todos os subtítulos</option>
+    {% for s in subtitulos %}
+      <option value="{{ s.id }}" {% if subtitulo_sel|string == s.id|string %}selected{% endif %}>
+        {{ s.nome }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <select name="ordem">
+    <option value="recentes"    {% if ordem=='recentes' %}selected{% endif %}>Mais recentes</option>
+    <option value="mais_usados" {% if ordem=='mais_usados' %}selected{% endif %}>Mais usados</option>
+    <option value="alfabetica"  {% if ordem=='alfabetica' %}selected{% endif %}>Alfabética</option>
+  </select>
+
+  <button type="submit" class="btn btn-primario">Buscar</button>
+</form>
+
+{% if assuntos %}
+<div class="lista-assuntos">
+  {% for a in assuntos %}
+  <div class="card-assunto">
+    <div class="card-cabecalho">
+      <div>
+        {% if a.subtitulo_nome %}<span class="etiqueta">{{ a.subtitulo_nome }}</span>{% endif %}
+        {% if a.tipo_nome %}<span class="etiqueta etiqueta-tipo">{{ a.tipo_nome }}</span>{% endif %}
+      </div>
+      <span class="uso">Usado {{ a.contador_uso }}×</span>
+    </div>
+
+    <h3 class="card-titulo" data-titulo="{{ a.titulo }}">{{ a.titulo }}</h3>
+
+    {% if a.corpo_modelo %}
+      <p class="card-corpo">{{ a.corpo_modelo }}</p>
+    {% endif %}
+
+    {% if a.tags %}
+    <div class="card-tags">
+      {% for tag in a.tags %}<span class="tag">#{{ tag }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="card-acoes">
+      <button class="btn btn-copiar" data-id="{{ a.id }}"
+              data-texto="{{ a.titulo }}">Copiar título</button>
+      {% if papel_logado in ['ADMIN_AUDITOR', 'EDITOR_REVISOR'] %}
+        <a class="btn btn-secundario" href="{{ url_for('editar_assunto', assunto_id=a.id) }}">Editar</a>
+        <form method="post" action="{{ url_for('excluir_assunto', assunto_id=a.id) }}"
+              onsubmit="return confirm('Excluir este assunto?');" style="display:inline">
+          <button type="submit" class="btn btn-perigo">Excluir</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+  <p class="vazio">Nenhum assunto encontrado.</p>
+{% endif %}
+{% endblock %}

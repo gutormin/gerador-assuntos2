@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Usuários{% endblock %}
+{% block conteudo %}
+<h1 class="pagina-titulo">Usuários</h1>
+
+<section class="form-card">
+  <h2>Novo usuário</h2>
+  <form method="post" action="{{ url_for('usuario_novo') }}" class="form-usuario">
+    <input type="text" name="nome" placeholder="Nome" required>
+    <input type="email" name="email" placeholder="E-mail" required>
+    <input type="password" name="senha" placeholder="Senha" required>
+    <select name="papel" required>
+      <option value="">— papel —</option>
+      <option value="ADMIN_AUDITOR">Administrador/Auditor</option>
+      <option value="EDITOR_REVISOR">Editor/Revisor</option>
+      <option value="SERVIDOR">Servidor (consulta)</option>
+    </select>
+    <button class="btn btn-primario">Criar</button>
+  </form>
+</section>
+
+<table class="tabela">
+  <thead>
+    <tr><th>Nome</th><th>E-mail</th><th>Papel</th><th>Status</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    {% for u in usuarios %}
+    <tr>
+      <td>{{ u.nome }}</td>
+      <td>{{ u.email }}</td>
+      <td>
+        {% if u.papel == 'ADMIN_AUDITOR' %}Administrador/Auditor
+        {% elif u.papel == 'EDITOR_REVISOR' %}Editor/Revisor
+        {% else %}Servidor{% endif %}
+      </td>
+      <td>
+        {% if u.bloqueado %}<span class="status-bloq">Bloqueado</span>
+        {% else %}<span class="status-ok">Ativo</span>{% endif %}
+      </td>
+      <td class="acoes-tabela">
+        {% if u.bloqueado %}
+        <form method="post" action="{{ url_for('usuario_desbloquear', user_id=u.id) }}">
+          <button class="btn btn-secundario">Desbloquear</button>
+        </form>
+        {% endif %}
+        <form method="post" action="{{ url_for('usuario_excluir', user_id=u.id) }}"
+              onsubmit="return confirm('Excluir este usuário?');">
+          <button class="btn btn-perigo">Excluir</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

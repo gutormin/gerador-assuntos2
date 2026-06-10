@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Gerador de Assuntos{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+  {% if usuario_logado %}
+  <header class="topo">
+    <div class="topo-marca">📄 Gerador de Assuntos</div>
+    <nav class="topo-menu">
+      <a href="{{ url_for('consulta') }}">Consultar</a>
+      {% if papel_logado in ['ADMIN_AUDITOR', 'EDITOR_REVISOR'] %}
+        <a href="{{ url_for('novo_assunto') }}">Novo Assunto</a>
+        <a href="{{ url_for('cadastros') }}">Cadastros</a>
+      {% endif %}
+      {% if papel_logado == 'ADMIN_AUDITOR' %}
+        <a href="{{ url_for('usuarios') }}">Usuários</a>
+        <a href="{{ url_for('auditoria') }}">Auditoria</a>
+      {% endif %}
+    </nav>
+    <div class="topo-usuario">
+      <span>{{ usuario_logado }}</span>
+      <a class="btn-sair" href="{{ url_for('logout') }}">Sair</a>
+    </div>
+  </header>
+  {% endif %}
+
+  <main class="conteudo">
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        {% for categoria, msg in mensagens %}
+          <div class="flash flash-{{ categoria }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

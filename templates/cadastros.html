@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block titulo %}Cadastros{% endblock %}
+{% block conteudo %}
+<h1 class="pagina-titulo">Cadastros</h1>
+<p class="subtexto">Gerencie as listas usadas no cadastro de assuntos.</p>
+
+<div class="grade-cadastros">
+
+  {# Tipos de documento #}
+  <section class="bloco-cadastro">
+    <h2>Tipos de Documento</h2>
+    <form method="post" action="{{ url_for('cadastro_novo', entidade='tipo') }}" class="linha-add">
+      <input type="text" name="nome" placeholder="Novo tipo..." required>
+      <button class="btn btn-primario">Adicionar</button>
+    </form>
+    <ul class="lista-itens">
+      {% for t in tipos %}
+      <li>
+        <span>{{ t.nome }}</span>
+        <form method="post" action="{{ url_for('cadastro_excluir', entidade='tipo', item_id=t.id) }}"
+              onsubmit="return confirm('Remover este item?');">
+          <button class="btn-x">×</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  {# Subtítulos #}
+  <section class="bloco-cadastro">
+    <h2>Subtítulos</h2>
+    <form method="post" action="{{ url_for('cadastro_novo', entidade='subtitulo') }}" class="linha-add">
+      <input type="text" name="nome" placeholder="Novo subtítulo..." required>
+      <button class="btn btn-primario">Adicionar</button>
+    </form>
+    <ul class="lista-itens">
+      {% for s in subtitulos %}
+      <li>
+        <span>{{ s.nome }}</span>
+        <form method="post" action="{{ url_for('cadastro_excluir', entidade='subtitulo', item_id=s.id) }}"
+              onsubmit="return confirm('Remover este item?');">
+          <button class="btn-x">×</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  {# Tags #}
+  <section class="bloco-cadastro">
+    <h2>Palavras-chave (Tags)</h2>
+    <form method="post" action="{{ url_for('cadastro_novo', entidade='tag') }}" class="linha-add">
+      <input type="text" name="nome" placeholder="Nova tag..." required>
+      <button class="btn btn-primario">Adicionar</button>
+    </form>
+    <ul class="lista-itens">
+      {% for tg in tags %}
+      <li>
+        <span>{{ tg.nome }}</span>
+        <form method="post" action="{{ url_for('cadastro_excluir', entidade='tag', item_id=tg.id) }}"
+              onsubmit="return confirm('Remover este item?');">
+          <button class="btn-x">×</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+</div>
+{% endblock %}

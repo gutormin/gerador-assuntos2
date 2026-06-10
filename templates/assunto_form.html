@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}{% if assunto %}Editar{% else %}Novo{% endif %} Assunto{% endblock %}
+{% block conteudo %}
+<h1 class="pagina-titulo">{% if assunto %}Editar Assunto{% else %}Novo Assunto{% endif %}</h1>
+
+<form method="post" class="form-card">
+  <label>Título do assunto *</label>
+  <input type="text" name="titulo" required
+         value="{{ assunto.titulo if assunto else '' }}">
+
+  <div class="form-linha">
+    <div>
+      <label>Subtítulo</label>
+      <select name="subtitulo_id">
+        <option value="">— selecione —</option>
+        {% for s in subtitulos %}
+          <option value="{{ s.id }}"
+            {% if assunto and assunto.subtitulo_id == s.id %}selected{% endif %}>
+            {{ s.nome }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Tipo de documento</label>
+      <select name="tipo_documento_id">
+        <option value="">— selecione —</option>
+        {% for t in tipos %}
+          <option value="{{ t.id }}"
+            {% if assunto and assunto.tipo_documento_id == t.id %}selected{% endif %}>
+            {{ t.nome }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <label>Palavras-chave (separadas por vírgula)</label>
+  <input type="text" name="tags" placeholder="ex: férias, prazo, urgente"
+         value="{{ tags_texto }}">
+
+  <label>Corpo / modelo sugerido (opcional)</label>
+  <textarea name="corpo_modelo" rows="6">{{ assunto.corpo_modelo if assunto else '' }}</textarea>
+
+  <div class="form-acoes">
+    <button type="submit" class="btn btn-primario">Salvar</button>
+    <a href="{{ url_for('consulta') }}" class="btn btn-secundario">Cancelar</a>
+  </div>
+</form>
+{% endblock %}
